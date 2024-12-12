@@ -161,8 +161,10 @@ fn main() {
         .unwrap()
         .join(concat!("data/", env!("CARGO_PKG_NAME"), ".dat"));
     let input = std::fs::read_to_string(path).unwrap();
+    let start = std::time::Instant::now();
     let result = process1(&input);
-    println!("Result part 1: {result}");
+    println!("Result part 1: {result} in {:?}",start.elapsed());
+    let start = std::time::Instant::now();
     let result = process2(&input);
-    println!("Result part 2: {result}");
+    println!("Result part 2: {result} in {:?}",start.elapsed());
 }
