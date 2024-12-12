@@ -13,26 +13,26 @@ const TEST_INPUT: &str = "
     292: 11 6 16 20
 ";
 
-fn parse(input: &str) -> impl Iterator<Item = (u64, Vec<u64>)>+'_ {
-    input
-        .trim()
-        .lines()
-        .map(|line| {
-            let (a,b)= line.trim().split_once(":").unwrap();
-            (
-                a.parse().unwrap(),
-                b.split_whitespace()
-                    .map(|x| x.parse().unwrap())
-                    .collect()
-            )
-        })
+fn parse(input: &str) -> impl Iterator<Item = (u64, Vec<u64>)> + '_ {
+    input.trim().lines().map(|line| {
+        let (a, b) = line.trim().split_once(":").unwrap();
+        (
+            a.parse().unwrap(),
+            b.split_whitespace().map(|x| x.parse().unwrap()).collect(),
+        )
+    })
 }
 
-fn process_single1(total: u64, curr_value: u64, mut rev_nexts: Vec<u64> ) -> bool {
-    if curr_value > total {return false}
+fn process_single1(total: u64, curr_value: u64, mut rev_nexts: Vec<u64>) -> bool {
+    if curr_value > total {
+        return false;
+    }
     if let Some(next) = rev_nexts.pop() {
-        process_single1(total, curr_value.saturating_add(next), rev_nexts.clone()) || process_single1(total, curr_value.saturating_mul(next), rev_nexts)
-    } else {curr_value == total}
+        process_single1(total, curr_value.saturating_add(next), rev_nexts.clone())
+            || process_single1(total, curr_value.saturating_mul(next), rev_nexts)
+    } else {
+        curr_value == total
+    }
 }
 
 fn process1(input: &str) -> u64 {
@@ -64,20 +64,22 @@ fn concat_digits(a: u64, b: u64) -> u64 {
 }
 
 #[test]
-fn test_concat_digits(){
+fn test_concat_digits() {
     assert_eq!(concat_digits(123, 456), 123456);
     assert_eq!(concat_digits(432, 1), 4321)
 }
 
 fn process_single2(total: u64, curr_value: u64, mut rev_nexts: Vec<u64>) -> bool {
     if curr_value > total {
-        return false
+        return false;
     }
     if let Some(next) = rev_nexts.pop() {
-        process_single2(total, curr_value.saturating_add(next), rev_nexts.clone()) || 
-        process_single2(total, curr_value.saturating_mul(next), rev_nexts.clone()) ||
-        process_single2(total, concat_digits(curr_value, next), rev_nexts)
-    } else {curr_value == total}
+        process_single2(total, curr_value.saturating_add(next), rev_nexts.clone())
+            || process_single2(total, curr_value.saturating_mul(next), rev_nexts.clone())
+            || process_single2(total, concat_digits(curr_value, next), rev_nexts)
+    } else {
+        curr_value == total
+    }
 }
 
 fn process2(input: &str) -> u64 {
@@ -102,7 +104,7 @@ fn main() {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
-        .join(concat!("data/",env!("CARGO_PKG_NAME"),".dat"));
+        .join(concat!("data/", env!("CARGO_PKG_NAME"), ".dat"));
     let input = std::fs::read_to_string(path).unwrap();
     let result = process1(&input);
     println!("Result part 1: {result}");

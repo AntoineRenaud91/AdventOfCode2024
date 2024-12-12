@@ -62,16 +62,23 @@ fn main() {
 
     // Create new cargo project
     fs::create_dir_all(&day_path).unwrap();
-    
+
     // Create Cargo.toml
     let cargo_toml_path = day_path.join("Cargo.toml");
-    fs::write(cargo_toml_path, format!(r#"[package]
+    fs::write(
+        cargo_toml_path,
+        format!(
+            r#"[package]
 name = "day{}"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-"#, day_name)).unwrap();
+"#,
+            day_name
+        ),
+    )
+    .unwrap();
 
     // Create src directory
     fs::create_dir_all(day_path.join("src")).unwrap();

@@ -62,7 +62,7 @@ fn main() {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
-        .join(concat!("data/",env!("CARGO_PKG_NAME"),".dat"));
+        .join(concat!("data/", env!("CARGO_PKG_NAME"), ".dat"));
     let input = std::fs::read_to_string(path).unwrap();
     let result = process1(&input);
     println!("Result part 1: {result}");
