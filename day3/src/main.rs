@@ -62,10 +62,10 @@ fn main() {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
         .unwrap()
-        .join("data/day3.dat");
+        .join(concat!("data/",env!("CARGO_PKG_NAME"),".dat"));
     let input = std::fs::read_to_string(path).unwrap();
     let result = process1(&input);
-    println!("Day2 result: {result}");
+    println!("Result part 1: {result}");
     let result = process2(&input);
-    println!("Day2 result: {result}");
+    println!("Result part 2: {result}");
 }

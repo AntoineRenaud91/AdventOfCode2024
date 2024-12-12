@@ -1,0 +1,2 @@
+[alias]
+new-day = "run --manifest-path tools/workspace-template/Cargo.toml -- "
