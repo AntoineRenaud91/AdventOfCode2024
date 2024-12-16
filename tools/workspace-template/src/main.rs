@@ -61,6 +61,10 @@ fn main() {
     let day_name = &args[1];
     let workspace_root = env::current_dir().unwrap();
     let day_path = workspace_root.join(format!("day{}", day_name));
+    if day_path.exists() {
+        eprintln!("Day project already exists: day{}", day_name);
+        std::process::exit(1);
+    }
 
     // Create new cargo project
     fs::create_dir_all(&day_path).unwrap();
