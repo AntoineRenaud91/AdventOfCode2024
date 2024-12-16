@@ -163,8 +163,8 @@ fn main() {
     let input = std::fs::read_to_string(path).unwrap();
     let start = std::time::Instant::now();
     let result = process1(&input);
-    println!("Result part 1: {result} in {:?}",start.elapsed());
+    println!("Result part 1: {result} in {:?}", start.elapsed());
     let start = std::time::Instant::now();
     let result = process2(&input);
-    println!("Result part 2: {result} in {:?}",start.elapsed());
+    println!("Result part 2: {result} in {:?}", start.elapsed());
 }
