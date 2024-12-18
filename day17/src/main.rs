@@ -1,6 +1,5 @@
 use std::path::PathBuf;
 
-
 #[cfg(test)]
 const TEST_INPUT_1: &str = "
     Register A: 729
@@ -31,7 +30,11 @@ impl Program {
     }
 
     fn out_str(&self) -> String {
-        self.outputs.iter().map(|o| o.to_string()).collect::<Vec<String>>().join(",")
+        self.outputs
+            .iter()
+            .map(|o| o.to_string())
+            .collect::<Vec<String>>()
+            .join(",")
     }
 
     fn solve(&mut self) {
@@ -44,36 +47,36 @@ impl Program {
             Instruction::Adv => {
                 self.register_a /= 2u64.pow(self.combo(*operand) as u32);
                 self.pointer += 1;
-            },
+            }
             Instruction::Bxl => {
                 self.register_b ^= operand;
                 self.pointer += 1;
-            },
+            }
             Instruction::Bst => {
-                self.register_b = self.combo(*operand)%8;
+                self.register_b = self.combo(*operand) % 8;
                 self.pointer += 1;
-            },
+            }
             Instruction::Jnz => {
                 if self.register_a == 0 {
                     self.pointer += 1;
                 } else {
                     self.pointer = self.combo(*operand) as usize;
                 }
-            },
+            }
             Instruction::Bxc => {
                 self.register_b ^= self.register_c;
                 self.pointer += 1;
-            },
+            }
             Instruction::Out => {
-                self.outputs.push(self.combo(*operand)%8);
+                self.outputs.push(self.combo(*operand) % 8);
                 self.pointer += 1;
-            },
+            }
             Instruction::Bdv => {
-                self.register_b = self.register_a/2u64.pow(self.combo(*operand) as u32);
+                self.register_b = self.register_a / 2u64.pow(self.combo(*operand) as u32);
                 self.pointer += 1;
-            },
+            }
             Instruction::Cdv => {
-                self.register_c = self.register_a/2u64.pow(self.combo(*operand) as u32);
+                self.register_c = self.register_a / 2u64.pow(self.combo(*operand) as u32);
                 self.pointer += 1;
             }
         }
@@ -100,7 +103,7 @@ enum Instruction {
     Bxc,
     Out,
     Bdv,
-    Cdv
+    Cdv,
 }
 
 impl TryFrom<u8> for Instruction {
@@ -120,13 +123,45 @@ impl TryFrom<u8> for Instruction {
     }
 }
 
-fn parse(input: &str)-> Program  {
+fn parse(input: &str) -> Program {
     let mut lines = input.trim().lines();
-    let register_a = lines.next().unwrap().trim().split_once(": ").unwrap().1.parse().unwrap();
-    let register_b = lines.next().unwrap().trim().split_once(": ").unwrap().1.parse().unwrap();
-    let register_c = lines.next().unwrap().trim().split_once(": ").unwrap().1.parse().unwrap();
+    let register_a = lines
+        .next()
+        .unwrap()
+        .trim()
+        .split_once(": ")
+        .unwrap()
+        .1
+        .parse()
+        .unwrap();
+    let register_b = lines
+        .next()
+        .unwrap()
+        .trim()
+        .split_once(": ")
+        .unwrap()
+        .1
+        .parse()
+        .unwrap();
+    let register_c = lines
+        .next()
+        .unwrap()
+        .trim()
+        .split_once(": ")
+        .unwrap()
+        .1
+        .parse()
+        .unwrap();
     let mut program = vec![];
-    let program_digits: Vec<u64> = lines.nth(1).unwrap().split_once(": ").unwrap().1.split(',').map(|s| s.parse().unwrap()).collect();
+    let program_digits: Vec<u64> = lines
+        .nth(1)
+        .unwrap()
+        .split_once(": ")
+        .unwrap()
+        .1
+        .split(',')
+        .map(|s| s.parse().unwrap())
+        .collect();
     for chunk in program_digits.chunks(2) {
         program.push((Instruction::try_from(chunk[0] as u8).unwrap(), chunk[1]));
     }
@@ -152,7 +187,6 @@ fn test_process1() {
     assert_eq!(process1(TEST_INPUT_1), "4,6,3,5,6,3,5,2,1,0")
 }
 
-
 fn process2(input: &str) -> u64 {
     let mut program = parse(input);
     let program_len = program.program_digits.len();
@@ -161,11 +195,13 @@ fn process2(input: &str) -> u64 {
     for n in 0..program_len {
         base_8.push(0);
         for i in 0.. {
-            base_8[n]= i;
-            value = (0..base_8.len()).map(|i| base_8[n-i]*8u64.pow(i as u32)).sum();
+            base_8[n] = i;
+            value = (0..base_8.len())
+                .map(|i| base_8[n - i] * 8u64.pow(i as u32))
+                .sum();
             program.set_anew(value);
             program.solve();
-            if program.outputs == program.program_digits[program_len-n-1..] {
+            if program.outputs == program.program_digits[program_len - n - 1..] {
                 break;
             }
         }
@@ -181,8 +217,8 @@ fn main() {
     let input = std::fs::read_to_string(path).unwrap();
     let start = std::time::Instant::now();
     let result = process1(&input);
-    println!("Result part 1: {result} in {:?}",start.elapsed());
+    println!("Result part 1: {result} in {:?}", start.elapsed());
     let start = std::time::Instant::now();
     let result = process2(&input);
-    println!("Result part 2: {result} in {:?}",start.elapsed());
+    println!("Result part 2: {result} in {:?}", start.elapsed());
 }
