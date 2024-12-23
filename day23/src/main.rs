@@ -72,16 +72,20 @@ fn test_process1() {
 fn process2(input: &str) -> String {
     let adjs = parse(input);
     let mut largest = BTreeSet::default();
-    for (k1, nexts) in adjs.iter() {
+    'outer: for (k1, nexts) in adjs.iter() {
+        if nexts.len() < largest.len() {
+            continue
+        }
         let mut set = BTreeSet::from([*k1]);
-        for next in nexts {
+        for (i,next) in nexts.iter().enumerate() {
             if set.is_subset(adjs.get(next).unwrap()) {
                 set.insert(next);
             }
+            if set.len()+nexts.len()-i <= largest.len() {
+                continue 'outer
+            } 
         }
-        if set.len() > largest.len() {
-            largest = set;
-        }
+        largest = set;
     }
     largest.iter().cloned().collect::<Vec<&str>>().join(",")
 }
