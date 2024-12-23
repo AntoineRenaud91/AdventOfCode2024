@@ -1,4 +1,4 @@
-use std::{collections::{BTreeSet, BTreeMap}, path::PathBuf};
+use std::{collections::{BTreeMap, BTreeSet}, path::PathBuf};
 
 
 #[cfg(test)]
@@ -49,12 +49,12 @@ fn parse(input: &str) -> BTreeMap<&str, BTreeSet<&str>>  {
 
 fn process1(input: &str) -> usize {
     let adjs = parse(input);
-    let mut groups = BTreeSet::default();
+    let mut groups = vec![];
     for (k1,set2) in adjs.iter() {
         for k2 in set2.iter().rev().take_while(|k| k > &k1) {
             for k3 in adjs.get(k2).unwrap().iter().rev().take_while(|k| k > &k2) {
                 if adjs.get(k3).unwrap().contains(k1) {
-                    groups.insert(BTreeSet::from_iter([k1,k2,k3]));
+                    groups.push(vec![k1,k2,k3]);
                 }
             }
         }
@@ -69,30 +69,19 @@ fn test_process1() {
     assert_eq!(process1(TEST_INPUT), 7)
 }
 
-fn largest_group_finder_rec<'a,'b>(
-    group: BTreeSet<&'a str>, 
-    adjs: &'b BTreeMap<&'a str, BTreeSet<&'a str>>, 
-    largest: &'b mut BTreeSet<&'a str>
-) {
-    let last = group.iter().last().unwrap();
-    for next in adjs.get(last).unwrap().iter().rev().filter(|k| k> &last) {
-        if group.is_subset(adjs.get(next).unwrap()) {
-            let mut next_group = group.clone();
-            next_group.insert(*next);
-            if next_group.len() > largest.len() {
-                *largest = next_group.clone();
-            }
-            largest_group_finder_rec(next_group, adjs, largest);
-        }
-    }
-}
-
-
 fn process2(input: &str) -> String {
     let adjs = parse(input);
     let mut largest = BTreeSet::default();
-    for k1 in adjs.keys().copied() {
-        largest_group_finder_rec(BTreeSet::from_iter([k1]), &adjs, &mut largest);
+    for (k1, nexts) in adjs.iter() {
+        let mut set = BTreeSet::from([*k1]);
+        for next in nexts {
+            if set.is_subset(adjs.get(next).unwrap()) {
+                set.insert(next);
+            }
+        }
+        if set.len() > largest.len() {
+            largest = set;
+        }
     }
     largest.iter().cloned().collect::<Vec<&str>>().join(",")
 }
